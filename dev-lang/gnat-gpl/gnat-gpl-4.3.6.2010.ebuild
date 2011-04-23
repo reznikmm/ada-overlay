@@ -31,7 +31,7 @@ QA_EXECSTACK="${BINPATH:1}/gnatls ${BINPATH:1}/gnatbind
 GNATSOURCE="${S}/${PN}-2008-src"
 
 src_unpack() {
-	gnatbuild_src_unpack base_unpack common_prep
+	gnatbuild2_src_unpack base_unpack common_prep
 
 	# one of the converted gcc->gnatgcc in common_prep needs to stay gcc in
 	# fact in this version
@@ -41,7 +41,7 @@ src_unpack() {
 }
 
 src_install() {
-	gnatbuild_src_install
+	gnatbuild2_src_install
 
 	# docs have to be fetched from 3rd place, quite messy package
 	dodir /usr/share/doc/${PF}/html
@@ -57,7 +57,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnatbuild_pkg_postinst
+	gnatbuild2_pkg_postinst
 
 	ewarn "Please note!!!"
 	ewarn "gnat-gpl is distributed under the GPL-2 license, without the GMGPL provision!!"

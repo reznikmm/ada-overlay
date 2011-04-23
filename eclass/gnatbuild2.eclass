@@ -1,6 +1,6 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild.eclass,v 1.51 2011/03/10 19:36:24 george Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild2.eclass,v 1.51 2011/03/10 19:36:24 george Exp $
 #
 # Author: George Shapovalov <george@gentoo.org>
 # Belongs to: ada herd <ada@gentoo.org>
@@ -281,7 +281,7 @@ disgusting_gcc_multilib_HACK() {
 
 
 #---->> pkg_* <<----
-gnatbuild_pkg_setup() {
+gnatbuild2_pkg_setup() {
 	debug-print-function ${FUNCNAME} $@
 
 	# Setup variables which would normally be in the profile
@@ -293,7 +293,7 @@ gnatbuild_pkg_setup() {
 	unset GCC_SPECS
 }
 
-gnatbuild_pkg_postinst() {
+gnatbuild2_pkg_postinst() {
 	if should_we_eselect_gnat; then
 		do_gnat_config
 	else
@@ -314,7 +314,7 @@ gnatbuild_pkg_postinst() {
 }
 
 
-gnatbuild_pkg_postrm() {
+gnatbuild2_pkg_postrm() {
 	# "eselect gnat update" now removes the env.d file if the corresponding 
 	# gnat profile was unmerged
 	eselect gnat update
@@ -327,9 +327,9 @@ gnatbuild_pkg_postrm() {
 #---->> src_* <<----
 
 # common unpack stuff
-gnatbuild_src_unpack() {
+gnatbuild2_src_unpack() {
 	debug-print-function ${FUNCNAME} $@
-	[ -z "$1" ] &&  gnatbuild_src_unpack all
+	[ -z "$1" ] &&  gnatbuild2_src_unpack all
 
 	while [ "$1" ]; do
 	case $1 in
@@ -376,10 +376,10 @@ gnatbuild_src_unpack() {
 			# Prepare the gcc source directory
 			cd "${S}/gcc"
 			touch cstamp-h.in
-			touch ada/einfo.h
-			touch ada/sinfo.h
-			touch ada/nmake.adb
-			touch ada/nmake.ads
+			#touch ada/einfo.h
+			#touch ada/sinfo.h
+			#touch ada/nmake.adb
+			#touch ada/nmake.ads
 			# set the compiler name to gnatgcc
 			for i in `find ada/ -name '*.ad[sb]'`; do \
 				sed -i -e "s/\"gcc\"/\"gnatgcc\"/g" ${i}; \
@@ -401,7 +401,7 @@ gnatbuild_src_unpack() {
 		;;
 
 		all)
-			gnatbuild_src_unpack base_unpack common_prep
+			gnatbuild2_src_unpack base_unpack common_prep
 		;;
 	esac
 	shift
@@ -413,16 +413,16 @@ gnatbuild_src_unpack() {
 # so just do sections for now (as in eclass section of handbook)
 # sections are: configure, make-tools, bootstrap,
 #  gnatlib_and_tools, gnatlib-shared
-gnatbuild_src_compile() {
+gnatbuild2_src_compile() {
 	debug-print-function ${FUNCNAME} $@
 	if [[ -z "$1" ]]; then
-		gnatbuild_src_compile all
+		gnatbuild2_src_compile all
 		return $?
 	fi
 
 	if [[ "all" == "$1" ]]
 	then # specialcasing "all" to avoid scanning sources unnecessarily
-		gnatbuild_src_compile configure make-tools \
+		gnatbuild2_src_compile configure make-tools \
 			bootstrap gnatlib_and_tools gnatlib-shared
 
 	else
@@ -584,14 +584,14 @@ gnatbuild_src_compile() {
 		done # while
 	fi   # "all" == "$1"
 }
-# -- end gnatbuild_src_compile
+# -- end gnatbuild2_src_compile
 
 
-gnatbuild_src_install() {
+gnatbuild2_src_install() {
 	debug-print-function ${FUNCNAME} $@
 
 	if [[ -z "$1" ]] ; then
-		gnatbuild_src_install all
+		gnatbuild2_src_install all
 		return $?
 	fi
 
@@ -716,10 +716,10 @@ EOF
 		;;
 
 	all)
-		gnatbuild_src_install install move_libs cleanup prep_env
+		gnatbuild2_src_install install move_libs cleanup prep_env
 		;;
 	esac
 	shift
 	done # while
 }
-# -- end gnatbuild_src_install
+# -- end gnatbuild2_src_install

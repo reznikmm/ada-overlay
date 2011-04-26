@@ -8,16 +8,16 @@ DESCRIPTION="GNAT Ada Compiler - AdaCore GPL version"
 HOMEPAGE="https://libre.adacore.com/"
 LICENSE="GPL-2"
 
-SRC_URI="mirror://gentoo//${P}.tar.bz2
+SRC_URI="http://www.ada-ru.org/files/gentoo/${P}.tar.bz2
 	http://www.adaic.org/standards/05rm/RM-05-Html.zip
-	x86?   ( mirror://gentoo/gnatboot-${BOOT_SLOT}-i386.tar.bz2 )
-	ppc?   ( mirror://gentoo/gnatboot-${BOOT_SLOT}-ppc.tar.bz2 )
-	amd64? ( mirror://gentoo/gnatboot-${BOOT_SLOT}-amd64.tar.bz2 )"
+	x86?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-i386.tar.bz2 )
+	ppc?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-ppc.tar.bz2 )
+	amd64? ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-amd64.tar.bz2 )"
 # ${BOOT_SLOT} and ${GCCVER} are defined in gnatbuild.eclass and depend
 # only on $PV, so should be safe to use in DEPEND/SRC_URI
 #	mirror://gentoo/${PN}-gcc-3.4.6.1.diff.bz2
 
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="amd64 ppc x86"
 DEPEND="app-arch/unzip"
 RDEPEND=""
 
@@ -28,7 +28,7 @@ QA_EXECSTACK="${BINPATH:1}/gnatls ${BINPATH:1}/gnatbind
 	${LIBPATH:1}/adalib/libgnat-2007.so
 	${LIBPATH:1}/libffi.so.4.0.1 ${LIBPATH:1}/32/libffi.so.4.0.1 "
 
-GNATSOURCE="${S}/${PN}-2008-src"
+GNATSOURCE="${S}/${PN}-2010-src"
 
 src_unpack() {
 	gnatbuild2_src_unpack base_unpack common_prep
@@ -49,7 +49,7 @@ src_install() {
 
 	# misc notes and examples
 	cd ${GNATSOURCE}
-	dodoc features* known-problems-601
+	dodoc features*
 	cp -pPR examples/ Contributors.html "${D}/usr/share/doc/${PF}/"
 
 	# this version of gnat does not provide info files yet

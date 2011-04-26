@@ -376,10 +376,6 @@ gnatbuild2_src_unpack() {
 			# Prepare the gcc source directory
 			cd "${S}/gcc"
 			touch cstamp-h.in
-			#touch ada/einfo.h
-			#touch ada/sinfo.h
-			#touch ada/nmake.adb
-			#touch ada/nmake.ads
 			# set the compiler name to gnatgcc
 			for i in `find ada/ -name '*.ad[sb]'`; do \
 				sed -i -e "s/\"gcc\"/\"gnatgcc\"/g" ${i}; \
@@ -393,8 +389,8 @@ gnatbuild2_src_unpack() {
 			# gcc 4.3 sources seem to have a common omission of $(DESTDIR),
 			# that leads to make install trying to rm -f file on live system.
 			# As we do not need this rm, we simply remove the whole line
-			if [ "4.3" == "${GCCBRANCH}" ] ; then
-				false && sed -i -e "/\$(RM) \$(bindir)/d" "${S}"/gcc/ada/Make-lang.in
+			if [ "4.3" == "${GCCBRANCH}" -a ${PN} == "${PN_GnatGCC}" ] ; then
+				sed -i -e "/\$(RM) \$(bindir)/d" "${S}"/gcc/ada/Make-lang.in
 			fi
 
 			mkdir -p "${GNATBUILD}"
@@ -490,12 +486,12 @@ gnatbuild2_src_compile() {
 					--disable-libunwind-exceptions"
 
 				# ACT's gnat-gpl does not like libada for whatever reason..
-#				if version_is_at_least 4.2 ; then
-#					confgcc="${confgcc} --enable-libada"
-#				else
-#					einfo "ACT's gnat-gpl does not like libada, disabling"
+				if [ ${PN} == "${PN_GnatGCC}" ]; then
+					confgcc="${confgcc} --enable-libada"
+				else
+					einfo "ACT's gnat-gpl does not like libada, disabling"
 					confgcc="${confgcc} --disable-libada"
-#				fi
+				fi
 
 				# set some specifics available in later versions
 				if version_is_at_least 4.3 ; then

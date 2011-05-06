@@ -57,11 +57,11 @@ lib_install() {
 		mv bin/xmlada-config "${DLbin}"
 
 		# organize gpr files
-		mv lib/gnat/* "${DLgpr}"
+		mv $(get_libdir)/gnat/* "${DLgpr}"
 
 		# the library and *.ali
-		mv lib/${PN}/* .
-		rm -rf bin include share lib
+		mv $(get_libdir)/${PN}/* .
+		rm -rf bin include share $(get_libdir)
 
 		# fix the .so links
 		#rm *.so

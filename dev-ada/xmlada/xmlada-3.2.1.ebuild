@@ -41,7 +41,7 @@ src_unpack()
 
 lib_compile()
 {
-	econf '--datadir=${prefix}/share'
+	econf '--datadir=${prefix}/share' '--libdir=${prefix}'/$(get_libdir)
 	emake -j1
 }
 

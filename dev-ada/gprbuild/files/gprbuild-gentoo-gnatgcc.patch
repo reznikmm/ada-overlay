@@ -1,0 +1,10 @@
+--- share/gprconfig/gnat.xml	2009-11-23 20:57:12.000000000 +0200
++++ /usr/share/gprconfig/gnat.xml	2011-05-07 15:46:38.000000000 +0300
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" ?>
+ <!DOCTYPE gprconfig [
+-  <!ENTITY filter_gnat '<compilers><compiler name="GNAT" /></compilers>'>
++  <!ENTITY filter_gnat '<compilers><compiler name="GNAT" /><compiler name="GNAT-Gentoo" /></compilers>'>
+ ] >
+ 
+ <gprconfig>

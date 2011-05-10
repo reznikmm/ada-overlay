@@ -16,7 +16,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64 ~ppc"
 
-DEPEND="|| ( >=dev-lang/gnat-gcc-4.5.0 >=dev-lang/gnat-gpl-2010 )
+DEPEND="|| ( >=dev-lang/gnat-gcc-4.5.0 >=dev-lang/gnat-gpl-4.3.6.2010 )
         dev-ada/xmlada"
 
 RDEPEND=""

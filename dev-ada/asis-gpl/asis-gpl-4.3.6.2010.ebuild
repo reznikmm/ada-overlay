@@ -14,11 +14,10 @@ LICENSE="GPL-2"
 
 KEYWORDS="~amd64 ~x86 ~ppc"
 
-IUSE="doc"
 RDEPEND="=dev-lang/gnat-gpl-${PV}*"
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/asis-${ACT_Ver}-src"
+S="${WORKDIR}/${PN}-${ACT_Ver}-src"
 
 # it may be even better to force plain -O2 -pipe -ftracer here
 replace-flags -O3 -O2
@@ -59,42 +58,33 @@ src_unpack() {
 }
 
 src_compile() {
-	# Build the shared library first, we need -fPIC here
     emake all tools || die "make failed"
 }
 
 src_install () {
-    make install install-asistant install-tools prefix="${D}"
-	# install the lib
-	mkdir -p "${D}${LIBPATH}"/adalib
-	chmod 0755 obj/libasis-${ACT_Ver}.so
-	cp obj/libasis-${ACT_Ver}.so "${D}${LIBPATH}"/adalib
-	insinto ${LIBPATH}/adalib
-	doins obj/*.ali lib/libasis.a
-	# make appropriate symlinks
-	pushd "${D}${LIBPATH}"/adalib
-	ln -s libasis-${ACT_Ver}.so libasis.so
-	popd
-	# sources
-	insinto ${LIBPATH}/adainclude
-	doins gnat/*.ad[sb]
-	doins asis/*.ad[sb]
+    local GPRPATH=/usr/$(get_libdir)/ada/${Gnat_Name}/${CTARGET}/${SLOT}/gpr
 
-	# tools
-	mkdir -p "${D}${BINPATH}"
-	for fn in tools/{asistant,gnat*}; do
-		cp ${fn}/${fn:6} "${D}${BINPATH}"
-	done
+    emake install install-asistant install-tools install-gnatcheck-doc\
+	prefix="${D}"\
+	I_BIN="${D}${BINPATH}" \
+	I_INC="${D}${LIBPATH}"/adainclude/asis \
+	I_LIB="${D}${LIBPATH}"/adalib/asis \
+	I_GPR="${D}${GPRPATH}" \
+	I_DOC="${D}"/usr/share/doc/${PF} \
+	G_DOC="${D}"/usr/share/doc/${PF} \
+	I_GPS="${D}"/usr/share/doc/${PF} \
+	|| die "make install failed"
 
-	# docs and examples
-	dodoc documentation/*.txt
-	dohtml documentation/*.html
-	# info's should go into gnat-gpl dirs
-	insinto ${DATAPATH}/info/
-	doins documentation/*.info
+    sed -i -e "/Source_Dirs/s#\".*\"#\"${LIBPATH}/adainclude/asis\"#" \
+	-e "/Library_Dir/s#\".*\"#\"${LIBPATH}/adalib/asis\"#" \
+	"${D}${GPRPATH}"/asis.gpr
 
-	insinto /usr/share/doc/${PF}
-	doins -r documentation/*.pdf tutorial/ templates/
+    rm -rf "${D}"/usr/share/doc/${PF}/{info,txt}
+    doinfo documentation/*.info
+    dodoc README features* *.txt documentation/*.txt
+
+    insinto /usr/share/doc/${PF}
+    doins -r tutorial/ templates/
 }
 
 pkg_postinst() {

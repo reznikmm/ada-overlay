@@ -62,7 +62,7 @@ src_compile() {
 }
 
 src_install () {
-    local GPRPATH=/usr/$(get_libdir)/ada/${Gnat_Name}/${CTARGET}/${SLOT}/gpr
+    local GPRPATH=/usr/$(get_libdir)/ada/${CTARGET}-${Gnat_Name}-${SLOT}/gpr
 
     emake install install-asistant install-tools install-gnatcheck-doc\
 	prefix="${D}"\

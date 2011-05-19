@@ -2,13 +2,15 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-ada/xmlada/xmlada-2.2.0-r1.ebuild,v 1.6 2009/08/29 21:49:37 flameeyes Exp $
 
+EAPI="2"
+
 inherit gnat versionator
 
 IUSE=""
 
 DESCRIPTION="XML library for Ada"
 HOMEPAGE="http://libre.adacore.com/xmlada/"
-SRC_URI="http://www.ada-ru.org/files/gentoo/${P}.tar.bz2"
+SRC_URI="http://www.ada-ru.org/files/gentoo/${PN}-gpl-${PV}-src.tgz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -21,11 +23,10 @@ DEPEND="virtual/ada
 	>=sys-apps/sed-4"
 RDEPEND=""
 
-src_unpack()
-{
-	unpack ${A}
-	cd "${S}"
+S="${WORKDIR}/${P}-src"
 
+src_prepare()
+{
 	# adjusting profile independent stuff in project files
 	sed -i -e "s:\.\./\.\./include/xmlada:${AdalibSpecsDir}/${PN}:" \
 		distrib/xmlada*.gpr || die "failed to adjust project files"
@@ -42,7 +43,7 @@ src_unpack()
 lib_compile()
 {
 	econf '--datadir=${prefix}/share' '--libdir=${prefix}'/$(get_libdir)
-	emake -j1
+	emake -j1 || die "make failed"
 }
 
 # NOTE: we are using $1 - the passed gnat profile name

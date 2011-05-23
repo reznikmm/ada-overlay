@@ -69,7 +69,7 @@ src_configure() {
 
 lib_compile()
 {
-        emake setup build || die "make setup build failed"
+        emake -j1 setup build || die "make setup build failed"
 }
 
 lib_install()

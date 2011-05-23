@@ -74,7 +74,7 @@ lib_compile()
 
 lib_install()
 {
-        emake install prefix="${D}/usr" \
+        emake -j1 install prefix="${D}/usr" \
 	    I_BIN="${CommonInst}/bin" \
 	    I_INC="${CommonInst}/aws/" \
 	    TI_INC="${CommonInst}/aws/native" \

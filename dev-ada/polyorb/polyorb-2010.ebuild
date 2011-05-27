@@ -18,8 +18,13 @@ KEYWORDS="~x86 ~amd64 ~ppc"
 
 RDEPEND="ssl? ( dev-libs/openssl )
 	soap? ( dev-ada/xmlada )"
+
+# PCS version of compiler and polyorb should match to use DSA.
+# See PCS_Version in polyorb's s-parint.ads and in compiler's exp_dist.ads
+
 DEPEND="${RDEPEND}
-	virtual/ada"
+	virtual/ada
+	dsa? ( || ( =dev-lang/gnat-gcc-4.5* =dev-lang/gnat-gpl-4.3.6.2010* ) )"
 
 S="${WORKDIR}/${PN}-gpl-${PV}-src"
 

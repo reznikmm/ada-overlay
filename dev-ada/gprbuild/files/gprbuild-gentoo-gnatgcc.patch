@@ -1,10 +1,18 @@
---- share/gprconfig/gnat.xml	2009-11-23 20:57:12.000000000 +0200
-+++ /usr/share/gprconfig/gnat.xml	2011-05-07 15:46:38.000000000 +0300
-@@ -1,6 +1,6 @@
- <?xml version="1.0" ?>
- <!DOCTYPE gprconfig [
--  <!ENTITY filter_gnat '<compilers><compiler name="GNAT" /></compilers>'>
-+  <!ENTITY filter_gnat '<compilers><compiler name="GNAT" /><compiler name="GNAT-Gentoo" /></compilers>'>
- ] >
+diff -Naur gprbuild-2010-src/src/gprlib.adb gprbuild-2010-src_/src/gprlib.adb
+--- gprbuild-2010-src/src/gprlib.adb	2010-06-08 18:33:46.000000000 +0300
++++ gprbuild-2010-src_/src/gprlib.adb	2011-06-01 17:00:21.000000000 +0300
+@@ -1055,7 +1055,13 @@
+                      else
+                         Compiler_Name := new String'(Line (1 .. Last));
  
- <gprconfig>
+-                        if Last > 3
++                        if Last > 7
++                          and then Line (Last - 6 .. Last) = "gnatgcc"
++                        then
++                           Gnatbind_Name :=
++                             new String'(Line (1 .. Last - 7) & "gnatbind");
++
++                        elsif Last > 3
+                           and then Line (Last - 2 .. Last) = "gcc"
+                         then
+                            Gnatbind_Name :=

@@ -38,6 +38,10 @@ src_unpack() {
 	# sed -i -e 's:(Last3 = "gnatgcc"):(Last3 = "gcc"):' "${S}"/gcc/ada/makegpr.adb
 	# reverting similar conversion in comment - line too long
 	sed -i -e 's:"gnatgcc":"gcc":' "${S}"/gcc/ada/osint.ads "${S}"/gcc/ada/switch.ads
+
+	# it seems some assertion isn't precise enought and breaks
+	# compilation of qtada-3.1.1. Remove it:
+	epatch "${FILESDIR}/drop_assert.patch"
 }
 
 src_install() {

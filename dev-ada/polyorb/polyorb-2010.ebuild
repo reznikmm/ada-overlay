@@ -78,7 +78,7 @@ lib_install()
 	sed -i -e "s:includedir=\"\${prefix}/include\":includedir=/usr/include/ada:" \
 		-e "s:libdir=\"/usr/lib\":libdir=${AdalibLibTop}/$1/${PN}:" \
 		"${DLbin}/${PN}-config"
-	sed -i -e "/Source_Dirs/s#../../include/#/usr/include/ada#" \
+	sed -i -e "/Source_Dirs/s#../../include#/usr/include/ada#" \
 		-e "/Object_Dir/s#../../lib#${AdalibLibTop}/$1#" \
 		"${DLgpr}"/polyorb.gpr
 	sed -i -e "/Library_Dir/s#../../polyorb/static#${AdalibLibTop}/$1/${PN}#" \

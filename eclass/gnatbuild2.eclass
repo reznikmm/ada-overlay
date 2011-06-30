@@ -335,6 +335,15 @@ gnatbuild2_src_unpack() {
 	case $1 in
 		base_unpack)
 			unpack ${A}
+
+                        if [[ ${PN} != "${PN_GnatGCC}" ]] && \
+                           [[ -d "${GNATSOURCE}/src/ada" ]]; then
+                        	cd "${S}"
+                        	mv "${GNATSOURCE}/src/ada" "gcc"
+                        	patch -p0 < "${GNATSOURCE}/src/gcc-${GNATMAJOR}${GNATMINOR}.dif" \
+                                   || die "patching error"
+			fi
+
 			pax-mark E $(find ${GNATBOOT} -name gnat1)
 
 			cd "${S}"
@@ -542,6 +551,8 @@ gnatbuild2_src_compile() {
 				cp "${S}"/gcc/ada/xtreeprs.adb .
 				cp "${S}"/gcc/ada/xsinfo.adb   .
 				cp "${S}"/gcc/ada/xeinfo.adb   .
+				cp "${S}"/gcc/ada/csinfo.adb   .
+				cp "${S}"/gcc/ada/ceinfo.adb   .
 				cp "${S}"/gcc/ada/xnmake.adb   .
 				cp "${S}"/gcc/ada/xutil.ad{s,b}   .
 				gnatmake xtreeprs && \

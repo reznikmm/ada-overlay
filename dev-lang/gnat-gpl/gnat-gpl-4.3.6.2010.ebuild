@@ -8,7 +8,10 @@ DESCRIPTION="GNAT Ada Compiler - AdaCore GPL version"
 HOMEPAGE="https://libre.adacore.com/"
 LICENSE="GPL-2"
 
-SRC_URI="http://www.ada-ru.org/files/gentoo/${P}.tar.bz2
+GNATREV="160200"
+
+SRC_URI="http://www.ada-ru.org/files/gentoo/gcc-${GNATMAJOR}_${GNATMINOR}-branch-rev${GNATREV}-src.tgz
+        http://www.ada-ru.org/files/gentoo/gnat-gpl-${ACT_Ver}-src.tgz
 	http://www.adaic.org/standards/05rm/RM-05-Html.zip
 	x86?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-i386.tar.bz2 )
 	ppc?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-ppc.tar.bz2 )
@@ -18,17 +21,19 @@ SRC_URI="http://www.ada-ru.org/files/gentoo/${P}.tar.bz2
 #	mirror://gentoo/${PN}-gcc-3.4.6.1.diff.bz2
 
 KEYWORDS="amd64 ppc x86"
-DEPEND="app-arch/unzip"
+DEPEND="app-arch/unzip
+>=dev-libs/gmp-4.2
+>=dev-libs/mpfr-2.3.1
+"
 RDEPEND=""
 
 IUSE=""
 
 QA_EXECSTACK="${BINPATH:1}/gnatls ${BINPATH:1}/gnatbind
-	${BINPATH:1}/gnatmake ${LIBEXECPATH:1}/gnat1
-	${LIBPATH:1}/adalib/libgnat-2007.so
-	${LIBPATH:1}/libffi.so.4.0.1 ${LIBPATH:1}/32/libffi.so.4.0.1 "
+	${BINPATH:1}/gnatmake ${LIBEXECPATH:1}/gnat1"
 
-GNATSOURCE="${S}/${PN}-2010-src"
+S="${WORKDIR}/gcc-${GNATMAJOR}_${GNATMINOR}-branch-src"
+GNATSOURCE="${WORKDIR}/${PN}-${ACT_Ver}-src"
 
 src_unpack() {
 	gnatbuild2_src_unpack base_unpack common_prep

@@ -26,6 +26,7 @@ S="${WORKDIR}/${P}-src"
 src_prepare ()
 {
     epatch "${FILESDIR}"/${PN}-gentoo-gnatgcc.patch
+    epatch "${FILESDIR}"/${PN}-ver-regexp-2010.patch
 }
 
 src_configure ()

@@ -16,7 +16,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64 ~ppc"
 
-DEPEND="|| ( >=dev-lang/gnat-gcc-4.5.0 >=dev-lang/gnat-gpl-4.3.6.2010 )
+DEPEND=">=dev-lang/gnat-gpl-4.5.3.2011
         dev-ada/xmlada"
 
 RDEPEND=""
@@ -26,6 +26,7 @@ S="${WORKDIR}/${P}-src"
 src_prepare ()
 {
     epatch "${FILESDIR}"/${PN}-gentoo-gnatgcc.patch
+    sed -i -e "s/Version:/Version :/" src/gpr_version.ads
 }
 
 src_configure ()

@@ -1,6 +1,6 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild2.eclass,v 1.52 2011/05/23 14:09:04 george Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild.eclass,v 1.52 2011/05/23 14:09:04 george Exp $
 #
 # Author: George Shapovalov <george@gentoo.org>
 # Belongs to: ada herd <ada@gentoo.org>
@@ -197,7 +197,7 @@ create_eselect_conf() {
 	echo "  bin_prefix=${CTARGET}" >> "${D}/${gnat_config_file}"
 
 	for abi in $(get_all_abis) ; do
-		add_profile_eselect_conf "${gnat_config_file}" "${abi}"
+		add_profile_eselect_conf "${D}/${gnat_config_file}" "${abi}"
 	done
 }
 
@@ -281,7 +281,7 @@ disgusting_gcc_multilib_HACK() {
 
 
 #---->> pkg_* <<----
-gnatbuild2_pkg_setup() {
+gnatbuild_pkg_setup() {
 	debug-print-function ${FUNCNAME} $@
 
 	# Setup variables which would normally be in the profile
@@ -293,7 +293,7 @@ gnatbuild2_pkg_setup() {
 	unset GCC_SPECS
 }
 
-gnatbuild2_pkg_postinst() {
+gnatbuild_pkg_postinst() {
 	if should_we_eselect_gnat; then
 		do_gnat_config
 	else
@@ -314,7 +314,7 @@ gnatbuild2_pkg_postinst() {
 }
 
 
-gnatbuild2_pkg_postrm() {
+gnatbuild_pkg_postrm() {
 	# "eselect gnat update" now removes the env.d file if the corresponding 
 	# gnat profile was unmerged
 	eselect gnat update
@@ -327,23 +327,14 @@ gnatbuild2_pkg_postrm() {
 #---->> src_* <<----
 
 # common unpack stuff
-gnatbuild2_src_unpack() {
+gnatbuild_src_unpack() {
 	debug-print-function ${FUNCNAME} $@
-	[ -z "$1" ] &&  gnatbuild2_src_unpack all
+	[ -z "$1" ] &&  gnatbuild_src_unpack all
 
 	while [ "$1" ]; do
 	case $1 in
 		base_unpack)
 			unpack ${A}
-
-                        if [[ ${PN} != "${PN_GnatGCC}" ]] && \
-                           [[ -d "${GNATSOURCE}/src/ada" ]]; then
-                        	cd "${S}"
-                        	mv "${GNATSOURCE}/src/ada" "gcc"
-                        	patch -p0 < "${GNATSOURCE}/src/gcc-${GNATMAJOR}${GNATMINOR}.dif" \
-                                   || die "patching error"
-			fi
-
 			pax-mark E $(find ${GNATBOOT} -name gnat1)
 
 			cd "${S}"
@@ -385,6 +376,8 @@ gnatbuild2_src_unpack() {
 			# Prepare the gcc source directory
 			cd "${S}/gcc"
 			touch cstamp-h.in
+			touch ada/[es]info.h
+			touch ada/nmake.ad[bs]
 			# set the compiler name to gnatgcc
 			for i in `find ada/ -name '*.ad[sb]'`; do \
 				sed -i -e "s/\"gcc\"/\"gnatgcc\"/g" ${i}; \
@@ -398,7 +391,7 @@ gnatbuild2_src_unpack() {
 			# gcc 4.3 sources seem to have a common omission of $(DESTDIR),
 			# that leads to make install trying to rm -f file on live system.
 			# As we do not need this rm, we simply remove the whole line
-			if [ "4.3" == "${GCCBRANCH}" -a ${PN} == "${PN_GnatGCC}" ] ; then
+			if [ "4.3" == "${GCCBRANCH}" ] ; then
 				sed -i -e "/\$(RM) \$(bindir)/d" "${S}"/gcc/ada/Make-lang.in
 			fi
 
@@ -406,7 +399,7 @@ gnatbuild2_src_unpack() {
 		;;
 
 		all)
-			gnatbuild2_src_unpack base_unpack common_prep
+			gnatbuild_src_unpack base_unpack common_prep
 		;;
 	esac
 	shift
@@ -418,16 +411,16 @@ gnatbuild2_src_unpack() {
 # so just do sections for now (as in eclass section of handbook)
 # sections are: configure, make-tools, bootstrap,
 #  gnatlib_and_tools, gnatlib-shared
-gnatbuild2_src_compile() {
+gnatbuild_src_compile() {
 	debug-print-function ${FUNCNAME} $@
 	if [[ -z "$1" ]]; then
-		gnatbuild2_src_compile all
+		gnatbuild_src_compile all
 		return $?
 	fi
 
 	if [[ "all" == "$1" ]]
 	then # specialcasing "all" to avoid scanning sources unnecessarily
-		gnatbuild2_src_compile configure make-tools \
+		gnatbuild_src_compile configure make-tools \
 			bootstrap gnatlib_and_tools gnatlib-shared
 
 	else
@@ -498,11 +491,11 @@ gnatbuild2_src_compile() {
 					--disable-libunwind-exceptions"
 
 				# ACT's gnat-gpl does not like libada for whatever reason..
-				if [ ${PN} == "${PN_GnatGCC}" ]; then
+				if version_is_at_least 4.2 ; then
 					confgcc="${confgcc} --enable-libada"
-				else
-					einfo "ACT's gnat-gpl does not like libada, disabling"
-					confgcc="${confgcc} --disable-libada"
+#				else
+#					einfo "ACT's gnat-gpl does not like libada, disabling"
+#					confgcc="${confgcc} --disable-libada"
 				fi
 
 				# set some specifics available in later versions
@@ -554,8 +547,6 @@ gnatbuild2_src_compile() {
 				cp "${S}"/gcc/ada/xtreeprs.adb .
 				cp "${S}"/gcc/ada/xsinfo.adb   .
 				cp "${S}"/gcc/ada/xeinfo.adb   .
-				cp "${S}"/gcc/ada/csinfo.adb   .
-				cp "${S}"/gcc/ada/ceinfo.adb   .
 				cp "${S}"/gcc/ada/xnmake.adb   .
 				cp "${S}"/gcc/ada/xutil.ad{s,b}   .
 				gnatmake xtreeprs && \
@@ -594,14 +585,14 @@ gnatbuild2_src_compile() {
 		done # while
 	fi   # "all" == "$1"
 }
-# -- end gnatbuild2_src_compile
+# -- end gnatbuild_src_compile
 
 
-gnatbuild2_src_install() {
+gnatbuild_src_install() {
 	debug-print-function ${FUNCNAME} $@
 
 	if [[ -z "$1" ]] ; then
-		gnatbuild2_src_install all
+		gnatbuild_src_install all
 		return $?
 	fi
 
@@ -726,10 +717,10 @@ EOF
 		;;
 
 	all)
-		gnatbuild2_src_install install move_libs cleanup prep_env
+		gnatbuild_src_install install move_libs cleanup prep_env
 		;;
 	esac
 	shift
 	done # while
 }
-# -- end gnatbuild2_src_install
+# -- end gnatbuild_src_install

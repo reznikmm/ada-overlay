@@ -197,7 +197,7 @@ create_eselect_conf() {
 	echo "  bin_prefix=${CTARGET}" >> "${D}/${gnat_config_file}"
 
 	for abi in $(get_all_abis) ; do
-		add_profile_eselect_conf "${D}/${gnat_config_file}" "${abi}"
+		add_profile_eselect_conf "${gnat_config_file}" "${abi}"
 	done
 }
 

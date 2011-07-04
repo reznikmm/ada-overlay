@@ -52,6 +52,9 @@ src_unpack() {
 src_install() {
 	gnatbuild2_src_install
 
+	# No idea how make compiler to find .h includes. So just make symlink
+	dodir "${LIBPATH}/gcc/${CTARGET}"
+	dosym "../.." "${LIBPATH}/gcc/${CTARGET}/${GCCRELEASE}"
 	# docs have to be fetched from 3rd place, quite messy package
 	dodir /usr/share/doc/${PF}/html
 	dohtml "${WORKDIR}"/*.html

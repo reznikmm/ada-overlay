@@ -16,3 +16,15 @@ diff -Naur gprbuild-2010-src/src/gprlib.adb gprbuild-2010-src_/src/gprlib.adb
                            and then Line (Last - 2 .. Last) = "gcc"
                          then
                             Gnatbind_Name :=
+--- gprbuild-2010-src/share/gprconfig/linker.xml	2011-03-16 19:50:00.000000000 +0200
++++ gprbuild-2010-src_/share/gprconfig/linker.xml	2011-07-05 16:59:40.000000000 +0300
+@@ -366,6 +366,9 @@
+     <targets>
+        <target name="^.*linux.*$" />
+     </targets>
++   <compilers negate="true">
++     <compiler name="GNAT-Gentoo" />
++   </compilers>
+     <config>
+    for Library_Partial_Linker use ("${PATH(ada)}${PREFIX(ada)}gcc", "-nostdlib", "-Wl,-r", "-o");
+    for Run_Path_Option  use ("-Wl,-z,origin,-rpath,");

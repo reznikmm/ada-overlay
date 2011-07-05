@@ -46,7 +46,7 @@ src_install ()
     rm -rf ${D}/usr/share/{doc,examples,gpr,info}
 
     insinto /usr/share/gprconfig
-    doins ${FILESDIR}/gentoo-gnat.xml
+    doins ${FILESDIR}/gentoo-gnat-${PV}.xml
 
     dodoc README features*
     dohtml doc/html/*

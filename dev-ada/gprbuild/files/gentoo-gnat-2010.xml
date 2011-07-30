@@ -3,7 +3,7 @@
   <!-- Current GNAT compiler in Gentoo -->
   <compiler_description>
     <name>GNAT-Gentoo</name>
-    <executable prefix="1">(.*-.*)?gnatgcc</executable>
+    <executable prefix="1">(.*-.*)?gnatmake</executable>
     <version>
       <external>gnatls -v</external>
       <grep regexp="^GNATLS.+?(\d+(\.\d+)?)" group="1"></grep>

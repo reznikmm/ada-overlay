@@ -22,7 +22,7 @@ KEYWORDS="~x86 ~amd64"
 
 # qtada is quite picky atm. For example this version will only compile with
 # the specified gnat, not even gnat-gcc-4.3.0 for example.
-RDEPEND="=dev-lang/gnat-gpl-4.3.6.2010*
+RDEPEND=">=dev-lang/gnat-gpl-4.3.6.2010
 	dev-ada/gprbuild
 	dev-ada/asis-gpl
 	>=x11-libs/qt-core-4.6.0

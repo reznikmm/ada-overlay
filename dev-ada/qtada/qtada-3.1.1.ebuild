@@ -4,6 +4,8 @@
 
 # We only need gnat.eclass for a few vars and helper functions.
 # We will not use src_* functions though.
+EAPI="2"
+
 inherit eutils multilib gnat
 
 IUSE=""
@@ -21,6 +23,7 @@ KEYWORDS="~x86 ~amd64"
 # qtada is quite picky atm. For example this version will only compile with
 # the specified gnat, not even gnat-gcc-4.3.0 for example.
 RDEPEND="=dev-lang/gnat-gpl-4.3.6.2010*
+	dev-ada/gprbuild
 	dev-ada/asis-gpl
 	>=x11-libs/qt-core-4.6.0
 	>=x11-libs/qt-sql-4.6.0
@@ -36,17 +39,21 @@ S="${WORKDIR}/${PN}-gpl-${PV}-${QTADA_RELEASE}"
 
 pkg_setup() {
 	local ActiveGnat=$(get_active_profile)
-	if [[ ! ${ActiveGnat:((-12))} == "gnat-gpl-4.3" ]]; then
-		ewarn "This version of qtada can only be compiled with gnat-gpl-4.3"
-		die   "Please switch to  gnat-gpl-4.3 and try again"
-	fi
+	case "${ActiveGnat}" in
+	 "*gnat-gpl*")
+		;;
+	 "*")
+		ewarn "This version of qtada can only be compiled with gnat-gpl"
+		die   "Please switch to  gnat-gpl and try again"
+		;;
+	esac
 }
 
 # As this version of qtada only compiles with gnat-gpl-4.3 and we already
 # verified that it is active, we do not switch profiles or do any majic here.
 # We simplt run build once, just need to set some path appropriately.
 src_compile() {
-	econf --datadir=${AdalibDataDir}/${PN} \
+	econf --datadir=${AdalibDataDir}/${PF} \
 		--includedir=${AdalibSpecsDir}/${PN} \
 		--libdir=${AdalibLibTop}/$(get_active_profile)/${PN} || die "econf failed"
 	emake || die "make failed"
@@ -60,7 +67,14 @@ src_install() {
 	einstall \
 		libdir=${D}/${InstTop}/${PN} \
 		bindir=${D}/${InstTop}/bin \
+		docdir=${D}/${PREFIX}/share/doc/${PF} \
 		includedir=${D}/${AdalibSpecsDir} || die "install failed"
+
+	if has_version ">=dev-ada/gprbuild-2011"; then
+		einfo "Fix amoc.xml"
+		sed -i -e "s/{PATH}/{PATH(Amoc)}/" \
+		    "${D}"/${PREFIX}/share/gprconfig/amoc.xml
+	fi
 
 	# move .ali file together with .so's
 	mv "${D}"/${InstTop}/${PN}/${PN}/*.ali "${D}"/${InstTop}/${PN}/
@@ -68,9 +82,9 @@ src_install() {
 
 	# arrange and fix gpr files
 	mv "${D}"/${InstTop}/${PN}/gnat "${D}"/${InstTop}/gpr
-	sed -i -e "s:/usr/include:${AdalibSpecsDir}:" \
-		-e "s:/usr/lib:${InstTop}/${PN}:" \
-		-e "s:${PN}/${PN}:${PN}" "${D}"/${InstTop}/gpr/*.gpr
+	sed -i -e "s:../../include:${AdalibSpecsDir}:" \
+		-e "s:../../lib:${InstTop}/${PN}:" \
+		-e "s:${PN}/${PN}:${PN}:" "${D}"/${InstTop}/gpr/*.gpr
 
 	# Create an environment file
 	local SpecFile="${D}/usr/share/gnat/eselect/${PN}/$(get_active_profile)"
@@ -81,7 +95,8 @@ src_install() {
 	echo "ADA_PROJECT_PATH=${InstTop}/gpr" >> "${SpecFile}"
 
 	# install docs
-	dodoc AUTHORS NEWS README
+	dodoc NEWS README
+	find "${D}/usr/examples/${PN}" -name main -delete
 	mv "${D}"/usr/examples/${PN} "${D}"/usr/share/doc/${PF}/examples
 	rmdir "${D}"/usr/examples/
 }

@@ -16,13 +16,15 @@ SRC_URI="http://www.ada-ru.org/files/gentoo/gcc-${GNATMAJOR}_${GNATMINOR}-branch
 	http://www.adaic.org/standards/05rm/RM-05-Html.zip
 	x86?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-i386.tar.bz2 )
 	ppc?   ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-ppc.tar.bz2 )
-	amd64? ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-amd64.tar.bz2 )"
+	amd64? ( http://www.ada-ru.org/files/gentoo/gnatboot-${BOOT_SLOT}-amd64.tar.bz2 )
+	arm? ( http://www.ada-ru.org/files/gentoo/gnatboot-4.5-armv6j.tar.bz2 )"
 # ${BOOT_SLOT} and ${GCCVER} are defined in gnatbuild.eclass and depend
 # only on $PV, so should be safe to use in DEPEND/SRC_URI
 #	mirror://gentoo/${PN}-gcc-3.4.6.1.diff.bz2
 
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~ppc ~x86 ~arm"
 DEPEND="app-arch/unzip
+sys-devel/flex
 >=dev-libs/gmp-4.2
 >=dev-libs/mpfr-2.3.1
 >=dev-libs/mpc-0.8.0"

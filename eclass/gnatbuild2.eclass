@@ -460,6 +460,10 @@ gnatbuild2_src_compile() {
 
 		export ADA_OBJECTS_PATH="${GNATLIB}/adalib"
 		export ADA_INCLUDE_PATH="${GNATLIB}/adainclude"
+		# exclude -gnata from Ada build flags to suppress assertions
+		# because there are some wrong assertions that crash gnat
+		# on QtAda and others sources
+		export BOOT_ADAFLAGS="-gnatpg"
 
 #		einfo "CC=${CC},
 #			ADA_INCLUDE_PATH=${ADA_INCLUDE_PATH},

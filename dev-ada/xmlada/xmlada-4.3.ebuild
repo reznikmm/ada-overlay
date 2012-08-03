@@ -25,24 +25,9 @@ RDEPEND=""
 
 S="${WORKDIR}/${P}w-src"
 
-src_prepare()
-{
-	# adjusting profile independent stuff in project files
-	sed -i -e "s:\.\./\.\./include/xmlada:${AdalibSpecsDir}/${PN}:" \
-		distrib/xmlada*.gpr || die "failed to adjust project files"
-
-	# fix profile independent stuff in xmlada-config
-	sed -i -e "s:^includedir=.*:includedir=${AdalibSpecsDir}/${PN}:" \
-		xmlada-config.in || die "failed to adjust xmlada-config"
-
-	# doinfo changed from gzipping stuff to bzipping, so we better rename the
-	# file before calling it to guard against other possible changes
-	# mv docs/xml.info docs/${PN}.info
-}
-
 lib_compile()
 {
-	econf '--datadir=${prefix}/share' '--libdir=${prefix}'/$(get_libdir)
+	econf '--datadir=${prefix}/share' '--libdir=${prefix}/lib'
 	emake -j1 || die "make failed"
 }
 
@@ -52,17 +37,24 @@ lib_install() {
 	emake -j1 prefix="${DL}" install || die "install failed"
 
 	pushd "${DL}"
+		# adjusting profile independent stuff in project files
+		sed -i -e "/Source_Dirs/s:\.\./\.\./include/xmlada:${AdalibSpecsDir}/${PN}:" \
+		 -e "/Libdir/s:\.\./\.\.:${AdalibLibTop}/$1:" \
+			lib/gnat/xmlada*.gpr \
+			|| die "failed to adjust project files"
+
 		# fix xmlada-config hardsets locations and move it to proper location
 		sed -i -e "s:^libdir=.*:libdir=${AdalibLibTop}/$1/${PN}:" \
+		   -e "s:^includedir=.*:includedir=${AdalibSpecsDir}/${PN}:" \
 			bin/xmlada-config
 		mv bin/xmlada-config "${DLbin}"
 
 		# organize gpr files
-		mv $(get_libdir)/gnat/* "${DLgpr}"
+		mv lib/gnat/* "${DLgpr}"
 
 		# the library and *.ali
-		mv $(get_libdir)/${PN}/* .
-		rm -rf bin include share $(get_libdir)
+		mv lib/${PN}/* .
+		rm -rf bin include share lib
 
 		# fix the .so links
 		#rm *.so

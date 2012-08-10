@@ -16,7 +16,7 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~x86 ~amd64 ~ppc"
 
-DEPEND=">=dev-lang/gnat-gpl-4.5.3.2011
+DEPEND=">=dev-lang/gnat-gpl-4.5.4.2012
         dev-ada/xmlada"
 
 RDEPEND=""
@@ -46,7 +46,7 @@ src_install ()
     rm -rf ${D}/usr/share/{doc,examples,gpr,info}
 
     insinto /usr/share/gprconfig
-    doins ${FILESDIR}/gentoo-gnat-2011.xml
+    doins ${FILESDIR}/gentoo-gnat-${PV}.xml
 
     dodoc README features*
     dohtml doc/html/*

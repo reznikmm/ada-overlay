@@ -39,7 +39,7 @@ lib_install() {
 	pushd "${DL}"
 		# adjusting profile independent stuff in project files
 		sed -i -e "/Source_Dirs/s:\.\./\.\./include/xmlada:${AdalibSpecsDir}/${PN}:" \
-		 -e "/Libdir/s:\.\./\.\.:${AdalibLibTop}/$1:" \
+		 -e "/Libdir/s:\.\./\.\./lib:${AdalibLibTop}/$1:" \
 			lib/gnat/xmlada*.gpr \
 			|| die "failed to adjust project files"
 

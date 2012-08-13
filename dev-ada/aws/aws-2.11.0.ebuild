@@ -74,6 +74,7 @@ src_configure() {
 
 lib_compile()
 {
+	sed -i -e "/LIBZ_Path/s#\${prefix}/lib#${AdalibLibTop}/$1#" config/makefile
         emake -j1 setup build || die "make setup build failed"
 }
 

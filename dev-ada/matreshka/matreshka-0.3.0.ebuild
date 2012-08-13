@@ -57,6 +57,7 @@ lib_install()
 	sed -i -e "/Source_Dirs/s#../../include#/usr/include/ada#" \
 		"${DLgpr}"/*.gpr
 	sed -i -e "/Library_.*Dir/s#/usr/lib[0-9]*#${AdalibLibTop}/$1/${PN}#" \
+		-e "/Include_Dir/s#include#include/ada#" \
 		"${DLgpr}"/${PN}/${PN}_config.gpr
 }
 

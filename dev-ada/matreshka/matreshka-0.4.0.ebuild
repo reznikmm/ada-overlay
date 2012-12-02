@@ -6,27 +6,24 @@ EAPI="2"
 
 inherit gnat
 
-IUSE=""
+IUSE="oracle postgresql sqlite"
 
 DESCRIPTION="set of Ada libraries to help to develop information systems"
-HOMEPAGE="http://adaforge.qtada.com/matreshka"
+HOMEPAGE="http://forge.ada-ru.org/matreshka"
 
-SRC_URI="http://forge.ada-ru.org/matreshka/downloads/${P}.tar.gz"
-
+SRC_URI="http://forge.ada-ru.org/${PN}/downloads/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 
-RDEPEND=">=dev-lang/gnat-gpl-4.3.6.2010
-	dev-ada/gprbuild"
-
-DEPEND="${RDEPEND}"
-
-RDEPEND=""
+RDEPEND=">=dev-lang/gnat-gpl-4.5.3.2011
+	dev-ada/gprbuild
+	oracle? ( dev-db/oracle-instantclient-basic )
+	postgresql? ( dev-db/postgresql-base )
+	sqlite? ( dev-db/sqlite )"
 
 DEPEND=">=virtual/ada-2005
-	dev-ada/gprbuild
-	${RDEPEND}"
+ ${RDEPEND}"
 
 # a location to temporarily keep common stuff installed by make install
 CommonInst="${WORKDIR}/common-install"
@@ -34,30 +31,34 @@ CommonInst="${WORKDIR}/common-install"
 lib_compile()
 {
         emake config
-        econf  
-        emake
+        econf $(use_enable oracle ) \
+          $(use_enable postgresql ) \
+          $(use_enable sqlite sqlite3 )
+        emake -j1
 }
 
 lib_install()
 {
         einfo emake install \
+          DESTDIR="${DL}" \
           INSTALL_PROJECT_DIR="${DLgpr}" \
-          INSTALL_INCLUDE_DIR="${DL}/include/${PN}" \
           INSTALL_LIBRARY_DIR="${DL}"
-        emake install \
+        emake -j1 install \
+          DESTDIR="${DL}" \
           INSTALL_PROJECT_DIR="${DLgpr}" \
-          INSTALL_INCLUDE_DIR="${DL}/usr/include/${PN}" \
           INSTALL_LIBRARY_DIR="${DL}"
 
 	[ -d "${CommonInst}" ] || mkdir "${CommonInst}"
 
 	cp -Rf "${DL}/usr/include" "${CommonInst}"
-	rm -rf "${DL}"/usr
+	cp -Rf "${DL}/usr/share"   "${CommonInst}"
+	mv "${DL}/usr/bin/*" "${DLbin}"
 
 	sed -i -e "/Source_Dirs/s#../../include#/usr/include/ada#" \
 		"${DLgpr}"/*.gpr
 	sed -i -e "/Library_.*Dir/s#/usr/lib[0-9]*#${AdalibLibTop}/$1/${PN}#" \
-		"${DLgpr}"/${PN}/config.gpr
+		-e "/Include_Dir/s#include#include/ada#" \
+		"${DLgpr}"/${PN}/${PN}_config.gpr
 }
 
 src_install ()
@@ -67,9 +68,14 @@ src_install ()
         insinto ${AdalibSpecsDir}
 	doins -r "${CommonInst}/include/${PN}"
 
+        dodir /usr/share
+        insinto /usr/share
+	doins -r "${CommonInst}/share/${PN}"
+
         #set up environment
-        #echo "PATH=%DLbin%" > ${LibEnv}
+        echo "PATH=%DLbin%" > ${LibEnv}
         echo "LDPATH=%DL%" >> ${LibEnv}
+        echo "AMF_DATA_DIR=/usr/share/${PN}/amf" >> ${LibEnv}
         #echo "ADA_OBJECTS_PATH=%DL%/${PN}" >> ${LibEnv}
         #echo "ADA_INCLUDE_PATH=${AdalibSpecsDir}/${PN}" >> ${LibEnv}
 
@@ -77,7 +83,7 @@ src_install ()
 
 	gnat_src_install
 
-	dodoc AUTHORS README
+	dodoc CONTRIBUTORS README
 
 	insinto /usr/share/doc/${PF}
 	doins -r examples

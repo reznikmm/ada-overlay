@@ -1,6 +1,6 @@
-# Copyright 1999-2006 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild2.eclass,v 1.52 2011/05/23 14:09:04 george Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/gnatbuild.eclass,v 1.56 2013/08/02 17:38:57 george Exp $
 #
 # Author: George Shapovalov <george@gentoo.org>
 # Belongs to: ada herd <ada@gentoo.org>
@@ -21,8 +21,6 @@ inherit eutils versionator toolchain-funcs flag-o-matic multilib autotools \
 	libtool fixheadtails gnuconfig pax-utils
 
 EXPORT_FUNCTIONS pkg_setup pkg_postinst pkg_postrm src_unpack src_compile src_install
-
-DESCRIPTION="Based on the ${ECLASS} eclass"
 
 IUSE="nls"
 # multilib is supported via profiles now, multilib usevar is deprecated
@@ -64,7 +62,7 @@ PN_GnatGpl="gnat-gpl"
 # so tc-* functions are of no use here. The present versioning scheme makes
 # GCCVER basically a part of PV, but *this may change*!!
 #
-# GCCVER can be set in the ebuild. 
+# GCCVER can be set in the ebuild.
 [[ -z ${GCCVER} ]] && GCCVER="${GNATRELEASE}"
 
 
@@ -315,7 +313,7 @@ gnatbuild2_pkg_postinst() {
 
 
 gnatbuild2_pkg_postrm() {
-	# "eselect gnat update" now removes the env.d file if the corresponding 
+	# "eselect gnat update" now removes the env.d file if the corresponding
 	# gnat profile was unmerged
 	eselect gnat update
 	elog "If you just unmerged the last gnat in this SLOT, your active gnat"
@@ -348,9 +346,16 @@ gnatbuild2_src_unpack() {
 
 			cd "${S}"
 			# patching gcc sources, following the toolchain
-			if [[ -d "${FILESDIR}"/${SLOT} ]] ; then
-				EPATCH_MULTI_MSG="Applying Gentoo patches ..." \
-				epatch "${FILESDIR}"/${SLOT}/*.patch
+			# first, the common patches
+			if [[ -d "${FILESDIR}"/patches ]] && [[ ! -z $(ls "${FILESDIR}"/patches/*.patch 2>/dev/null) ]] ; then
+				EPATCH_MULTI_MSG="Applying common Gentoo patches ..." \
+				epatch "${FILESDIR}"/patches/*.patch
+			fi
+			#
+			# then per SLOT
+			if [[ -d "${FILESDIR}"/patches/${SLOT} ]] && [[ ! -z $(ls "${FILESDIR}"/patches/${SLOT}/*.patch 2>/dev/null) ]] ; then
+				EPATCH_MULTI_MSG="Applying SLOT-specific Gentoo patches ..." \
+				epatch "${FILESDIR}"/patches/${SLOT}/*.patch
 			fi
 			# Replacing obsolete head/tail with POSIX compliant ones
 			ht_fix_file */configure

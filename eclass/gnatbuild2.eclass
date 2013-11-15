@@ -334,12 +334,16 @@ gnatbuild2_src_unpack() {
 		base_unpack)
 			unpack ${A}
 
-                        if [[ ${PN} != "${PN_GnatGCC}" ]] && \
-                           [[ -d "${GNATSOURCE}/src/ada" ]]; then
-                        	cd "${S}"
-                        	mv "${GNATSOURCE}/src/ada" "gcc"
-                        	patch -p0 < "${GNATSOURCE}/src/gcc-${GNATMAJOR}${GNATMINOR}.dif" \
-                                   || die "patching error"
+			if [[ ${PN} != "${PN_GnatGCC}" ]] && \
+			   [[ -d "${GNATSOURCE}/src/ada" ]]; then
+				cd "${S}"
+				mv "${GNATSOURCE}/src/ada" "gcc"
+				GPL_PATCH="${GNATSOURCE}/src/gcc-${GNATMAJOR}${GNATMINOR}.dif"
+				#  GNAT GPL 2013 doesn't have patch
+				if [[ -f "${GPL_PATCH}" ]]; then
+				    patch -p0 < "${GPL_PATCH}" \
+					|| die "patching error"
+				fi
 			fi
 
 			pax-mark E $(find ${GNATBOOT} -name gnat1)
@@ -511,7 +515,9 @@ gnatbuild2_src_compile() {
 				fi
 
 				# set some specifics available in later versions
-				if version_is_at_least 4.3 ; then
+				if version_is_at_least 4.7 ; then
+					confgcc="${confgcc} --enable-threads=posix"
+				elif version_is_at_least 4.3 ; then
 					einfo "setting gnat thread model"
 					confgcc="${confgcc} --enable-threads=gnat"
 					confgcc="${confgcc} --enable-shared=boehm-gc,ada,libada"

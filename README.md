@@ -4,6 +4,8 @@ Ada_Ru Gentoo overlay
 Small unofficial Gentoo overlay for Ada related stuff
 
 ```bash
-layman --overlays="https://raw.githubusercontent.com/reznikmm/ada-overlay/master/repositories.xml" -f -a reznikmm-ada-overlay
-emerge -av dev-lang/gnat-gpl
+emerge --ask app-eselect/eselect-repository
+mkdir -p /etc/portage/repos.conf
+eselect repository add ada-overlay git https://github.com/reznikmm/ada-overlay.git
+emerge -av dev-ada/matreshka
 ```

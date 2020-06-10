@@ -1,11 +1,11 @@
 <repositories encoding="unicode" version="1.1">
   <repo priority="50" quality="experimental" status="unofficial">
-    <name>ada_ru</name>
-    <description>ada_ru gentoo overlay</description>
+    <name>ada-overlay</name>
+    <description>Ada programing language gentoo overlay</description>
     <homepage>https://github.com/reznikmm/ada-overlay</homepage>
     <owner>
       <email>reznikmm@gmail.com</email>
-      <name>Maxim Reznik</name>
+      <name>Max Reznik</name>
     </owner>
     <source type="git">https://github.com/reznikmm/ada-overlay</source>
   </repo>

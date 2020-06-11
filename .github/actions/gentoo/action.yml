@@ -1,0 +1,13 @@
+name: 'Gentoo build'
+description: 'Build ebuilds on Gentoo Linux'
+inputs:
+  ebuild-names:  # id of input
+    description: 'What is to build'
+    required: true
+    default: 'dev-ada/matreshka'
+outputs:
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.ebuild-names }}

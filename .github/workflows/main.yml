@@ -10,9 +10,13 @@ jobs:
       - name: Cache binpkgs
         uses: actions/cache@v2
         with:
-          path: ~/binpkgs
-          key: key1
+          key: key3
+          path: binpkgs
       - name: Build ebuilds
         uses: ./.github/actions/gentoo
         with:
-          ebuild-names: dev-ada/matreshka
+          ebuild-names: --usepkg dev-ada/matreshka
+      - name: Debug output
+        run: |
+          echo GITHUB_WORKSPACE=$GITHUB_WORKSPACE
+          ls -lR $GITHUB_WORKSPACE/binpkgs

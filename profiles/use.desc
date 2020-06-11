@@ -1,0 +1,7 @@
+a2js - Build Ada-to-JavaScript translator
+aws - Build SpikeDog application daemon based on AWS
+mysql - Add support for MySQL/MariaDB client driver
+oracle - Add support for Oracle Database client driver
+postgresql - Add support for PostgreSQL client driver
+sqlite - Add support for SQLite client driver
+uml - Add support for UML in Ada Modeling Framework (AMF)

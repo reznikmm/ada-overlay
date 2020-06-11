@@ -1,7 +1,7 @@
-Ada_Ru Gentoo overlay
-=====================
+Ada Gentoo overlay
+==================
 
-Small unofficial Gentoo overlay for Ada related stuff
+Small unofficial Gentoo overlay for Ada related ebuilds
 
 ```bash
 emerge --ask app-eselect/eselect-repository

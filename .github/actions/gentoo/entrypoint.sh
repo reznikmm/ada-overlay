@@ -1,8 +1,9 @@
 #!/bin/bash
+set -x
 echo ADA_TARGET=gnat_2019 >> /etc/portage/make.conf
 echo FEATURES=buildpkg >> /etc/portage/make.conf
-sed -i -e '/PKGDIR=/s@=.*@="/github/home/binpkgs"@' /etc/portage/make.conf
-mkdir -p /github/home/binpkgs
+sed -i -e "/PKGDIR=/s@=.*@=$GITHUB_WORKSPACE/binpkgs@" /etc/portage/make.conf
+mkdir -p $GITHUB_WORKSPACE/binpkgs
 emerge --usepkg dev-ada/gprbuild
 eselect gcc set x86_64-pc-linux-gnu-8.3.1
 . /etc/profile
@@ -10,7 +11,7 @@ eselect gcc set x86_64-pc-linux-gnu-8.3.1
 mkdir -p /etc/portage/repos.conf
 cat << EOF > /etc/portage/repos.conf/ada-overlay.conf
 [ada-overlay]
-location = /github/workspace
+location = $GITHUB_WORKSPACE
 EOF
 
 cat << EOF >/etc/portage/package.accept_keywords 

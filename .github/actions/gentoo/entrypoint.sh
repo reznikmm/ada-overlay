@@ -14,8 +14,6 @@ cat << EOF > /etc/portage/repos.conf/ada-overlay.conf
 location = $GITHUB_WORKSPACE
 EOF
 
-cat << EOF >/etc/portage/package.accept_keywords 
-=dev-ada/matreshka-20.1 ~amd64
-EOF
+echo "dev-ada/*::ada-overlay ~amd64" > /etc/portage/package.accept_keywords 
 
 emerge $*

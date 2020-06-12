@@ -15,7 +15,7 @@ jobs:
       - name: Build ebuilds
         uses: ./.github/actions/gentoo
         with:
-          ebuild-names: --usepkg dev-ada/ada-pretty
+          ebuild-names: --usepkg dev-ada/protobuf
       - name: Debug output
         run: |
           echo GITHUB_WORKSPACE=$GITHUB_WORKSPACE

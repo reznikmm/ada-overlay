@@ -1,3 +1,5 @@
+[![Build](https://github.com/reznikmm/ada-overlay/workflows/Build/badge.svg)](https://github.com/reznikmm/ada-overlay/actions)
+
 Ada Gentoo overlay
 ==================
 
